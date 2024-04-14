@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>Speech translator demo</title>
+</head>
+<body>
+    <h1>Test</h1>
+
+    <p class="output">Test output</p>
+
+    <script>
+        // var speechRecognitionList = new webkitSpeechGrammarList();
+        // speechRecognitionList.addFromString(grammar, 1);
+
+        var recognition = new webkitSpeechRecognition();
+        // recognition.grammars = speechRecognitionList;
+        // recognition.continuous = false;
+        recognition.lang = "fr-FR";
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        const output = document.querySelector(".output");
+
+        recognition.onend = () => {
+            recognition.start();
+        }
+
+        recognition.onresult = (event) => {
+            console.log(event.results);
+            output.textContent = event.results[0][0].transcript
+        };
+
+        recognition.start();
+        console.log("recognition started");
+    </script>
+
+</body>
+</html>
