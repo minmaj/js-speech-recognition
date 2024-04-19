@@ -3,36 +3,82 @@
 <head>
     <meta charset="utf-8">
     <title>Speech translator demo</title>
-</head>
-<body>
-    <h1>Test</h1>
 
-    <p class="output">Test output</p>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    <script>
-        // var speechRecognitionList = new webkitSpeechGrammarList();
-        // speechRecognitionList.addFromString(grammar, 1);
-
-        var recognition = new webkitSpeechRecognition();
-        // recognition.grammars = speechRecognitionList;
-        // recognition.continuous = false;
-        recognition.lang = "fr-FR";
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-
-        const output = document.querySelector(".output");
-
-        recognition.onend = () => {
-            recognition.start();
+    <style>
+        body {
+            margin: 0;
+            top: 0;
+            left: 0;
         }
 
-        recognition.onresult = (event) => {
-            console.log(event.results);
-            output.textContent = event.results[0][0].transcript
-        };
+        #speechInput {
+            color: #0f0;
+        }
 
-        recognition.start();
-        console.log("recognition started");
+        #speechOutput {
+            font-size: 1.6em;
+            font-family: sans-serif;
+            font-style: italic;
+            font-weight: 600;
+        }
+
+        .container {
+            position: absolute;
+            width: 100%;
+            height: 50%;
+            background-color: #0f0;
+
+            display: flex;
+            flex-direction: column-reverse;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Demo sample</h1>
+
+    <div class="container">
+        <p id="speechInput">Input</p>
+
+        <div id="speechOutput">Output</div>
+    </div>
+
+    <script>
+
+        $(document).ready(function(){
+            var recognition = new webkitSpeechRecognition();
+            recognition.lang = "fr-FR";
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            var $inputSpeech = $("#speechInput");
+            var $speechOutput = $("#speechOutput");
+
+            recognition.onend = () => {
+                recognition.start();
+            }
+
+            recognition.onresult = (event) => {
+                console.log(event.results);
+                $inputSpeech.text(event.results[0][0].transcript);
+                $speechOutput.fadeOut(500);
+                var refreshSpeechOutputTimer = 
+                    setTimeout(function() {
+                        var text = $("#speechInput").text();
+                        $speechOutput.text(text);
+                        $speechOutput.fadeIn(500);
+                    }, 1000);
+            };
+
+            recognition.start();
+            console.log("recognition started");
+        });
+
     </script>
 
 </body>
