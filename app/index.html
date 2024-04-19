@@ -47,6 +47,7 @@
         <div id="speechOutput">Output</div>
     </div>
 
+
     <script>
 
         $(document).ready(function(){
@@ -56,8 +57,16 @@
             recognition.interimResults = false;
             recognition.maxAlternatives = 1;
 
-            var $inputSpeech = $("#speechInput");
+            var $speechInput = $("#speechInput");
             var $speechOutput = $("#speechOutput");
+
+            var timer = 5; // Timer in seconds !
+            var clearSpeechTimeoutId = null;
+            function clearSpeech () {
+                $speechOutput.fadeOut(500, function() {
+                    $speechOutput.text("");
+                });
+            }
 
             recognition.onend = () => {
                 recognition.start();
@@ -65,13 +74,19 @@
 
             recognition.onresult = (event) => {
                 console.log(event.results);
-                $inputSpeech.text(event.results[0][0].transcript);
+                if (clearSpeechTimeoutId != null)
+                {
+                    clearTimeout(clearSpeechTimeoutId);
+                }
+                $speechInput.text(event.results[0][0].transcript);
                 $speechOutput.fadeOut(500);
                 var refreshSpeechOutputTimer = 
                     setTimeout(function() {
                         var text = $("#speechInput").text();
                         $speechOutput.text(text);
-                        $speechOutput.fadeIn(500);
+                        $speechOutput.fadeIn(500, function() {
+                            clearSpeechTimeoutId = setTimeout(clearSpeech, timer * 1000);
+                        });
                     }, 1000);
             };
 
