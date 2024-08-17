@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <style>
+        body {
+            margin: 0;
+            top: 0;
+            left: 0;
+        }
+
+        #speechInput {
+            color: #0f0;
+        }
+
+        #speechOutput {
+            font-size: 1.6em;
+            font-family: sans-serif;
+            font-style: italic;
+            font-weight: 600;
+        }
+
+        .container {
+            position: absolute;
+            width: 100%;
+            height: 50%;
+            background-color: #0f0;
+
+            display: flex;
+            flex-direction: column-reverse;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Demo sample</h1>
+
+    <div class="container">
+        <p id="speechInput">Input</p>
+
+        <div id="speechOutput">Output</div>
+    </div>
+
+
+    <script>
+
+        $(document).ready(function(){
+            var recognition = new webkitSpeechRecognition();
+            recognition.lang = "en-US";
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            var $speechInput = $("#speechInput");
+            var $speechOutput = $("#speechOutput");
+
+            var timer = 5; // Timer in seconds !
+            var clearSpeechTimeoutId = null;
+            function clearSpeech () {
+                $speechOutput.fadeOut(500, function() {
+                    $speechOutput.text("");
+                });
+            }
+
+            recognition.onend = () => {
+                recognition.start();
+            }
+
+            recognition.onresult = (event) => {
+                console.log(event.results);
+                if (clearSpeechTimeoutId != null)
+                {
+                    clearTimeout(clearSpeechTimeoutId);
+                }
+                $speechInput.text(event.results[0][0].transcript);
+                $speechOutput.fadeOut(500);
+                var refreshSpeechOutputTimer = 
+                    setTimeout(function() {
+                        var text = $("#speechInput").text();
+                        $speechOutput.text(text);
+                        $speechOutput.fadeIn(500, function() {
+                            clearSpeechTimeoutId = setTimeout(clearSpeech, timer * 1000);
+                        });
+                    }, 1000);
+            };
+
+            recognition.start();
+            console.log("recognition started");
+        });
+
+    </script>
+
+</body>
+</html>
