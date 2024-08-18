@@ -77,6 +77,7 @@
             var clearSpeechTimeoutId = null;
             function clearSpeech () {
                 $speechOutput.fadeOut(500, function() {
+                    $speechOutputShadow.text("");
                     $speechOutput.text("");
                 });
             }
