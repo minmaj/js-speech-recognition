@@ -18,27 +18,33 @@
         }
 
         #speechOutput {
+            color: #fffe1e;
+        }
+
+        #speechOutputShadow {
+            color: #000;
+            -webkit-text-stroke: 6pt rgb(0, 0, 0);
+        }
+
+        .speechOutput {
+            position: absolute;
             width: 80%;
             text-align: center;
             font-size: 2.2em;
             font-family: Consolas;
             font-weight: 800;
-            color: #fffe1e;
-            -webkit-text-stroke-width: 3px;
-            -webkit-text-stroke-color: #000;
         }
 
         .container {
             position: absolute;
-            width: 100%;
-            height: 50%;
-            background-color: #0016ff;
-
             display: flex;
             flex-direction: column-reverse;
             flex-wrap: nowrap;
             justify-content: center;
             align-items: center;
+            width: 100%;
+            height: 50%;
+            background-color: #0016ff;
         }
 
 
@@ -49,7 +55,8 @@
     <div class="container">
         <p id="speechInput">Input</p>
 
-        <div id="speechOutput">Output</div>
+        <div id="speechOutputShadow" class="speechOutput">Output</div>
+        <div id="speechOutput" class="speechOutput">Output</div>
     </div>
 
 
@@ -63,6 +70,7 @@
             recognition.maxAlternatives = 1;
 
             var $speechInput = $("#speechInput");
+            var $speechOutputShadow = $("#speechOutputShadow");
             var $speechOutput = $("#speechOutput");
 
             var timer = 5; // Timer in seconds !
@@ -84,11 +92,16 @@
                     clearTimeout(clearSpeechTimeoutId);
                 }
                 $speechInput.text(event.results[0][0].transcript);
+                $speechOutputShadow.fadeOut(500);
                 $speechOutput.fadeOut(500);
                 var refreshSpeechOutputTimer = 
                     setTimeout(function() {
                         var text = $("#speechInput").text();
+                        
+                        $speechOutputShadow.text(text);
                         $speechOutput.text(text);
+
+                        $speechOutputShadow.fadeIn(500)
                         $speechOutput.fadeIn(500, function() {
                             clearSpeechTimeoutId = setTimeout(clearSpeech, timer * 1000);
                         });
